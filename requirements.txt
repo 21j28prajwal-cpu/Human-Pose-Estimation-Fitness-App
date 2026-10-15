@@ -3,3 +3,5 @@ opencv-python-headless==4.9.0.80
 mediapipe==0.10.21
 numpy==1.26.4
 protobuf>=4.25.3,<5  # Matches both packages' requirements
+pandas>=2.0.0
+plotly>=5.18.0

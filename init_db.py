@@ -35,6 +35,67 @@ def initialize_database():
         )
         ''')
 
+        # Create user_profiles table for profile features
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_profiles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER UNIQUE,
+            display_name TEXT,
+            bio TEXT DEFAULT '',
+            avatar_emoji TEXT DEFAULT '🧘',
+            fitness_goal TEXT DEFAULT 'Stay Healthy',
+            preferred_theme TEXT DEFAULT 'light',
+            total_workouts INTEGER DEFAULT 0,
+            total_minutes REAL DEFAULT 0.0,
+            streak_days INTEGER DEFAULT 0,
+            last_workout_date TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+        ''')
+
+        # Create workout_history table for tracking sessions
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS workout_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            workout_type TEXT NOT NULL,
+            workout_name TEXT NOT NULL,
+            duration_seconds REAL DEFAULT 0,
+            reps INTEGER DEFAULT 0,
+            calories_burned REAL DEFAULT 0,
+            pose_accuracy REAL DEFAULT 0,
+            notes TEXT DEFAULT '',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+        ''')
+
+        # Create analytics table for cost/performance metrics
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS analytics (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            metric_name TEXT NOT NULL,
+            metric_value REAL NOT NULL,
+            metric_unit TEXT DEFAULT '',
+            category TEXT DEFAULT 'general',
+            recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        ''')
+
+        # Create achievements table for gamification
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS achievements (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            badge_name TEXT NOT NULL,
+            badge_icon TEXT NOT NULL,
+            description TEXT,
+            earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+        ''')
+
         # Insert default admin user with hashed credentials
         salt = os.urandom(16).hex()
         default_password = "admin@123"  # CHANGE THIS IN PRODUCTION
